@@ -1,6 +1,4 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { SongsModule } from './songs/songs.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { SongsController } from './songs/songs.controller';
@@ -11,6 +9,9 @@ import { Artist } from './models/artist.entity';
 import { User } from './models/user.entity';
 import { Playlist } from './models/playlist.entity';
 import { PlayListModule } from './play-list/play-list.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { ArtistModule } from './artist/artist.module';
 
 @Module({
   imports: [
@@ -28,9 +29,10 @@ import { PlayListModule } from './play-list/play-list.module';
     TypeOrmModule.forFeature([Song, Artist, User, Playlist]),
     SongsModule,
     PlayListModule,
+    AuthModule,
+    UserModule,
+    ArtistModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

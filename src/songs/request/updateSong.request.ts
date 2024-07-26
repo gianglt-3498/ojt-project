@@ -1,5 +1,4 @@
 import {
-  IsArray,
   IsDateString,
   IsMilitaryTime,
   IsNumber,
