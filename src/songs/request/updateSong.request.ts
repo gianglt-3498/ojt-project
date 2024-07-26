@@ -2,27 +2,26 @@ import {
   IsArray,
   IsDateString,
   IsMilitaryTime,
-  IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
 
-export class CreateSongRequest {
+export class UpdateSongRequest {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   readonly title: string;
 
-  @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
+  @IsOptional()
   readonly artists: string[];
 
-  @IsNotEmpty()
   @IsDateString()
+  @IsOptional()
   readonly releasedDate: Date;
 
-  @IsNotEmpty()
   @IsMilitaryTime()
+  @IsOptional()
   readonly duration: Date;
 
   @IsString()

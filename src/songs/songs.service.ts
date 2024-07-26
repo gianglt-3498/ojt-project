@@ -1,17 +1,61 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Song } from 'src/models/song.entity';
+import { Repository, UpdateResult } from 'typeorm';
+import { CreateSongRequest } from './request/createSong.request';
+import { UpdateSongRequest } from './request/updateSong.request';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class SongsService {
-  // local db
-  // local array
+  constructor(
+    @InjectRepository(Song) private songRepository: Repository<Song>,
+  ) {}
 
-  private readonly songs = [];
+  async create(songRequest: CreateSongRequest): Promise<Song> {
+    const song = new Song();
 
-  create(song) {
-    this.songs.push(song);
-    return this.songs;
+    song.title = songRequest.title;
+    song.artists = JSON.stringify(songRequest.artists);
+    song.duration = songRequest.duration as unknown as string;
+    song.lyrics = songRequest.lyrics;
+    song.releasedDate = songRequest.releasedDate;
+
+    return await this.songRepository.save(song);
   }
-  findAll() {
-    return this.songs;
+  async findAll(): Promise<Song[]> {
+    return await this.songRepository.find({});
+  }
+
+  async findOne(id: number): Promise<Song> {
+    return await this.songRepository.findOneBy({ id });
+  }
+
+  async removeElement(id: number): Promise<void> {
+    await this.songRepository.delete(id);
+  }
+
+  async updateElement(
+    id: number,
+    recordToUpdate: UpdateSongRequest,
+  ): Promise<UpdateResult> {
+    const updateData: Partial<Song> = {
+      ...recordToUpdate,
+      artists: JSON.stringify(recordToUpdate.artists),
+      duration: recordToUpdate.duration as unknown as string,
+    };
+    return this.songRepository.update(id, updateData);
+  }
+
+  async findAllWithPaginate(
+    options: IPaginationOptions,
+  ): Promise<Pagination<Song>> {
+    const queryBuilder = this.songRepository.createQueryBuilder('c');
+    queryBuilder.orderBy('c.releasedDate', 'DESC');
+    return paginate<Song>(queryBuilder, options);
   }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpException,
@@ -9,18 +10,28 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongRequest } from './request/createSong.request';
+import { Song } from 'src/models/song.entity';
+import { UpdateSongRequest } from './request/updateSong.request';
+import { UpdateResult } from 'typeorm';
 
 @Controller('songs')
 export class SongsController {
   constructor(private readonly songsService: SongsService) {}
 
   @Get()
-  findAll() {
+  findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe)
+    page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe)
+    limit: number = 10,
+  ) {
     try {
-      return this.songsService.findAll();
+      limit = limit > 100 ? 100 : limit;
+      return this.songsService.findAllWithPaginate({ page, limit });
     } catch (error) {
       throw new HttpException('[Error]:', HttpStatus.INTERNAL_SERVER_ERROR, {
         cause: error,
@@ -29,8 +40,14 @@ export class SongsController {
   }
 
   @Post()
-  create(@Body() createSongRequest: CreateSongRequest) {
-    return this.songsService.create(createSongRequest);
+  create(@Body() createSongRequest: CreateSongRequest): Promise<Song> {
+    try {
+      return this.songsService.create(createSongRequest);
+    } catch (error) {
+      throw new HttpException('[Error]:', HttpStatus.BAD_REQUEST, {
+        cause: error,
+      });
+    }
   }
 
   @Get(':id')
@@ -41,16 +58,48 @@ export class SongsController {
     )
     id: number,
   ) {
-    return `find song base id with type is ${typeof id}`;
+    try {
+      return this.songsService.findOne(id);
+    } catch (error) {
+      throw new HttpException('[Error]:', HttpStatus.BAD_REQUEST, {
+        cause: error,
+      });
+    }
   }
 
   @Put(':id')
-  update() {
-    return 'update song base id';
+  update(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+    @Body() updateSongRequest: UpdateSongRequest,
+  ): Promise<UpdateResult> {
+    try {
+      return this.songsService.updateElement(id, updateSongRequest);
+    } catch (error) {
+      throw new HttpException('[Error]:', HttpStatus.BAD_REQUEST, {
+        cause: error,
+      });
+    }
   }
 
   @Delete(':id')
-  destroy() {
-    return 'Delete song base id';
+  destroy(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+  ) {
+    try {
+      this.songsService.removeElement(id);
+      return 'Remove success';
+    } catch (error) {
+      throw new HttpException('[Error]:', HttpStatus.BAD_REQUEST, {
+        cause: error,
+      });
+    }
   }
 }
