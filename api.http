@@ -2,7 +2,7 @@ GET http://localhost:3000
 
 ###
 
-GET http://localhost:3000/songs
+GET http://localhost:3000/songs/?page=1&limit=2
 
 ###
 
@@ -14,10 +14,26 @@ POST http://localhost:3000/songs
 Content-Type: application/json
 
 {
-"title": "Lasting Lover",
-"artists": ["Siagla"],
-"releasedDate" : "2022-07-29 00:00:00",
-"duration" :"02:34"
+    "title": "You for Me 3",
+    "artists": ["Siagla", "Yan", "Ny"],
+    "releasedDate": "2022-09-30",
+    "duration": "02:45",
+    "lyrics": "Some lyrics"
 }
 
 ###
+
+DELETE  http://localhost:3000/songs/1
+
+###
+
+PUT http://localhost:3000/songs/2
+Content-Type: application/json
+
+{
+    "title": "You for Me 3",
+    "artists": ["Siagla", "Yan", "Ny"],
+    "releasedDate": "2022-09-30",
+    "duration": "02:45",
+    "lyrics": "Another Some lyrics"
+}
