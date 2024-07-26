@@ -7,6 +7,10 @@ import { SongsController } from './songs/songs.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { Song } from './models/song.entity';
+import { Artist } from './models/artist.entity';
+import { User } from './models/user.entity';
+import { Playlist } from './models/playlist.entity';
+import { PlayListModule } from './play-list/play-list.module';
 
 @Module({
   imports: [
@@ -21,8 +25,9 @@ import { Song } from './models/song.entity';
       entities: [__dirname + '/**/*.entity{.ts,.js}'], // Adjust path as needed
       synchronize: process.env.TYPEORM_SYNC === 'true', // Use env to toggle sync
     }),
-    TypeOrmModule.forFeature([Song]),
+    TypeOrmModule.forFeature([Song, Artist, User, Playlist]),
     SongsModule,
+    PlayListModule,
   ],
   controllers: [AppController],
   providers: [AppService],
