@@ -12,26 +12,20 @@ import { PlayListModule } from './play-list/play-list.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ArtistModule } from './artist/artist.module';
+import { dataSourceOptions } from './db/data-source';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT, 10) || 5432,
-      username: process.env.DB_USERNAME || 'root',
-      password: process.env.DB_PASSWORD || '123456',
-      database: process.env.DB_NAME || 'ojt_training',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'], // Adjust path as needed
-      synchronize: process.env.TYPEORM_SYNC === 'true', // Use env to toggle sync
-    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     TypeOrmModule.forFeature([Song, Artist, User, Playlist]),
     SongsModule,
     PlayListModule,
     AuthModule,
     UserModule,
     ArtistModule,
+    SeedModule,
   ],
 })
 export class AppModule implements NestModule {
