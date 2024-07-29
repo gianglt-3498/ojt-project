@@ -11,12 +11,14 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongRequest } from './request/createSong.request';
 import { Song } from 'src/models/song.entity';
 import { UpdateSongRequest } from './request/updateSong.request';
 import { UpdateResult } from 'typeorm';
+import { JwtArtistGuard } from 'src/auth/jwt-artist.guard';
 
 @Controller('songs')
 export class SongsController {
@@ -40,6 +42,7 @@ export class SongsController {
   }
 
   @Post()
+  @UseGuards(JwtArtistGuard)
   create(@Body() createSongRequest: CreateSongRequest): Promise<Song> {
     try {
       return this.songsService.create(createSongRequest);
