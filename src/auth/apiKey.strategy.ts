@@ -1,12 +1,16 @@
+// apiKey.strategy.ts
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-jwt';
+import { Strategy, ExtractJwt } from 'passport-jwt';
 import { AuthService } from './auth.service';
 
 @Injectable()
 export class ApiKeyStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    super();
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: 'your-secret-key', // Thay thế bằng secret key của bạn
+    });
   }
 
   async validate(apiKey: string) {
