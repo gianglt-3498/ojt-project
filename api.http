@@ -47,7 +47,7 @@ Content-Type: application/json
 {
 "firstName": "john",
 "lastName": "doe",
-"email": "john@gmail.com",
+"email": "john123@gmail.com",
 "password": "123456"
 }
 
@@ -58,5 +58,15 @@ Content-Type: application/json
 
 {
 "email": "john@gmail.com",
+"password": "123456"
+}
+
+
+### Artist Login User
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+"email": "john_doe@gmail.com",
 "password": "123456"
 }
